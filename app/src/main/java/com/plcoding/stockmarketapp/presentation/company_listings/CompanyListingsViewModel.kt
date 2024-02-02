@@ -12,6 +12,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 
 /*The ViewModel serves as an intermediary between the UI and the data layer. Instead of directly interacting with the data layer,
@@ -27,6 +28,10 @@ class CompanyListingsViewModel @Inject constructor(
 
     var state by mutableStateOf(CompanyListingsState())
     private var searchJob: Job? = null
+
+    init {
+        getCompanyListings()
+    }
 
     fun onEvent(event: CompanyListingsEvent) {
         when (event) {
@@ -46,7 +51,7 @@ class CompanyListingsViewModel @Inject constructor(
     }
 
     private fun getCompanyListings(
-        query: String = state.searchQuery.toLowerCase(),
+        query: String = state.searchQuery.toLowerCase(Locale.ROOT),
         fetchFromRemote: Boolean = false
     ) {
         viewModelScope.launch {
