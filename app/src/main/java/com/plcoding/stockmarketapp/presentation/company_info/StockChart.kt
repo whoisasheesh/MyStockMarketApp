@@ -5,14 +5,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.asAndroidPath
-import androidx.compose.ui.graphics.asComposePath
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,7 +24,6 @@ fun StockChart(
     val transparentGraphColor = remember {
         graphColor.copy(alpha = 0.5f)
     }
-
     val upperValue = remember(infos) {
         (infos.maxOfOrNull { it.close }?.plus(1))?.roundToInt() ?: 0
     }
@@ -38,7 +31,7 @@ fun StockChart(
         infos.minOfOrNull { it.close }?.toInt() ?: 0
     }
     val density = LocalDensity.current
-    val textPaint = remember {
+    val textPaint = remember(density) {
         Paint().apply {
             color = android.graphics.Color.WHITE
             textAlign = Paint.Align.CENTER
@@ -60,7 +53,7 @@ fun StockChart(
             }
         }
         val priceStep = (upperValue - lowerValue) / 5f
-        (0..5).forEach { i ->
+        (0..4).forEach { i ->
             drawContext.canvas.nativeCanvas.apply {
                 drawText(
                     round(lowerValue + priceStep * i).toString(),
@@ -70,7 +63,6 @@ fun StockChart(
                 )
             }
         }
-
         var lastX = 0f
         val strokePath = Path().apply {
             val height = size.height
@@ -82,7 +74,6 @@ fun StockChart(
 
                 val x1 = spacing + i * spacePerHour
                 val y1 = height - spacing - (leftRatio * height).toFloat()
-
                 val x2 = spacing + (i + 1) * spacePerHour
                 val y2 = height - spacing - (rightRatio * height).toFloat()
                 if (i == 0) {
@@ -111,7 +102,6 @@ fun StockChart(
                 endY = size.height - spacing
             )
         )
-
         drawPath(
             path = strokePath,
             color = graphColor,
@@ -122,36 +112,3 @@ fun StockChart(
         )
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
