@@ -25,7 +25,7 @@ class StockRepositoryImpl @Inject constructor(
     private val api: StockApi,
     private val db: StockDatabase,
     private val companyListingsParser: CSVParser<CompanyListing>,
-    private val intradayInforParser: CSVParser<IntraDayInfo>
+    private val intradayInfoParser: CSVParser<IntraDayInfo>
 ) : StockRepository {
 
     private val dao = db.dao
@@ -79,7 +79,7 @@ class StockRepositoryImpl @Inject constructor(
     override suspend fun getIntradayInfo(symbol: String): Resource<List<IntraDayInfo>> {
         return try {
             val response = api.getIntradayInfo(symbol)
-            val results = intradayInforParser.parse(response.byteStream())
+            val results = intradayInfoParser.parse(response.byteStream())
             Resource.Success(results)
         } catch (e: Exception) {
             e.printStackTrace()
